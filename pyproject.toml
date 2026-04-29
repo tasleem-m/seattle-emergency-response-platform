@@ -1,0 +1,16 @@
+[project]
+name = "seattle-emergency-response-platform"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "boto3>=1.42.97",
+    "loguru>=0.7.3",
+    "polars>=1.40.1",
+    "python-dotenv>=1.2.2",
+    "sodapy>=2.2.0",
+]
+
+[project.scripts]
+seattle-emergency-response-platform = "seattle_emergency_response_platform:main"
