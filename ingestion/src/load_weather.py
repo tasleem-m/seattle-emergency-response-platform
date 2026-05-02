@@ -1,7 +1,6 @@
 import polars as pl
-from datetime import datetime, timezone
+from datetime import datetime
 import os
-import boto3
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -41,26 +40,3 @@ def get_weather_data() -> pl.DataFrame:
     )
 
     return complete_weather_data
-
-def write_parquet_to_s3(df):
-    session = boto3.Session(profile_name=PROFILE, region_name=REGION)
-    creds = session.get_credentials().get_frozen_credentials()
-    now = datetime.now(timezone.utc)
-
-    path = (
-        f"{BASE_PATH}/weather/"
-        f"year={now.year}/month={now.month:02}/day={now.day:02}/"
-        f"calls_{now.strftime('%Y%m%d_%H%M%S')}.parquet"
-    )
-
-    df.write_parquet(
-        path,
-        storage_options={
-            "aws_access_key_id": creds.access_key,
-            "aws_secret_access_key": creds.secret_key,
-            "aws_session_token": creds.token,
-            "region": REGION,
-        }
-    )
-
-    print(f"Wrote batch to {path}")

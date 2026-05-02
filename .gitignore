@@ -213,5 +213,6 @@ data/
 *.json
 *.gz
 
+tiger_tracts/
 logs/
 docker-compose.yml
