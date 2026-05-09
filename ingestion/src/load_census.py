@@ -68,4 +68,10 @@ def get_census_tiger_tracts() -> gpd.GeoDataFrame:
 
     tiger_shapefile = gpd.read_file(extract_path)
 
+    for col in tiger_shapefile.columns:
+        if col != "geometry":
+            tiger_shapefile[col] = tiger_shapefile[col].astype(str)
+    
+    tiger_shapefile["geometry"] = tiger_shapefile["geometry"].to_wkt()
+
     return tiger_shapefile

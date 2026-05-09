@@ -1,0 +1,101 @@
+version: 2
+
+models:
+  - name: slv_911_calls
+    description: Cleaned Seattle Fire 911 incidents with standardized timestamps and geospatial enrichment.
+    columns:
+      - name: incident_number
+        description: Unique Seattle Fire incident identifier.
+        tests:
+          - not_null
+
+      - name: incident_timestamp
+        description: Timestamp of the incident in UTC.
+        tests:
+          - not_null
+
+      - name: incident_type
+        description: Type/category of emergency response call.
+
+      - name: address
+        description: Reported incident address.
+
+      - name: latitude
+        description: Final latitude using raw coordinates or GeoJSON fallback.
+
+      - name: longitude
+        description: Final longitude using raw coordinates or GeoJSON fallback.
+
+      - name: incident_geography
+        description: Snowflake GEOGRAPHY point derived from final coordinates.
+
+      - name: ingested_at_utc
+        description: Bronze ingestion timestamp.
+        tests:
+          - not_null
+
+  - name: slv_weather
+    description: Cleaned NOAA GHCNh hourly weather observations for Seattle-Tacoma Airport.
+    columns:
+      - name: station_id
+        description: NOAA station identifier.
+        tests:
+          - not_null
+
+      - name: observed_at_utc
+        description: Observation timestamp in UTC.
+        tests:
+          - not_null
+
+      - name: station_geography
+        description: Snowflake GEOGRAPHY point representing station coordinates.
+        tests:
+          - not_null
+
+      - name: temperature_c
+        description: Air temperature in Celsius.
+
+      - name: precipitation_6hr_mm
+        description: Six-hour accumulated precipitation in millimeters.
+
+      - name: wind_speed_mps
+        description: Wind speed in meters per second.
+  
+  - name: slv_census
+    description: Census tract demographic and socioeconomic metrics from ACS data.
+    columns:
+      - name: tract_geoid
+        description: Census tract GEOID identifier.
+        tests:
+          - not_null
+
+      - name: census_year
+        description: Census observation year.
+        tests:
+          - not_null
+
+      - name: total_population
+        description: Total tract population.
+
+      - name: median_household_income
+        description: Median household income with Census sentinel values normalized to null.
+
+  - name: slv_census_tracts
+    description: Census tract polygons and tract geographic metadata.
+    columns:
+      - name: tract_geoid
+        description: Census tract GEOID identifier.
+        tests:
+          - not_null
+          - unique
+
+      - name: tract_geography
+        description: Snowflake GEOGRAPHY polygon representing census tract boundaries.
+        tests:
+          - not_null
+
+      - name: centroid_latitude
+        description: Census tract centroid latitude.
+
+      - name: centroid_longitude
+        description: Census tract centroid longitude.
