@@ -1,0 +1,125 @@
+version: 2
+
+models:
+  - name: gld_incident_enriched
+    description: Enriched emergency incident fact table with census tract demographics and hourly weather observations.
+    columns:
+      - name: incident_number
+        description: Unique Seattle Fire incident identifier.
+        tests:
+          - not_null
+
+      - name: incident_timestamp
+        description: Incident timestamp in UTC.
+        tests:
+          - not_null
+
+      - name: tract_geoid
+        description: Census tract GEOID spatially matched to the incident location.
+
+      - name: temperature_c
+        description: Hourly observed temperature in Celsius associated with the incident timestamp.
+
+      - name: temperature_f
+        description: Hourly observed temperature in Fahrenheit associated with the incident timestamp.
+
+      - name: incident_geography
+        description: Snowflake GEOGRAPHY point representing incident location.
+
+  - name: gld_spatial_hotspots
+    description: Spatial aggregation of emergency incidents by census tract and year with demographic normalization metrics.
+    columns:
+      - name: census_year
+        description: Census year associated with demographic enrichment.
+        tests:
+          - not_null
+
+      - name: tract_geoid
+        description: Census tract GEOID.
+        tests:
+          - not_null
+
+      - name: total_incidents
+        description: Total emergency incidents occurring within the tract.
+        tests:
+          - not_null
+
+      - name: incidents_per_1000_residents
+        description: Incident rate normalized per 1,000 tract residents.
+
+      - name: most_common_incident_type
+        description: Most frequently occurring incident type within the tract.
+
+  - name: gld_weather_impact
+    description: Daily aggregation of emergency incidents and associated weather conditions.
+    columns:
+      - name: incident_date
+        description: Calendar date of incident activity.
+        tests:
+          - not_null
+          - unique
+
+      - name: total_incidents
+        description: Total incidents occurring on the date.
+        tests:
+          - not_null
+
+      - name: avg_temperature_f
+        description: Average daily temperature in Fahrenheit.
+
+      - name: total_precipitation_mm
+        description: Total daily precipitation in millimeters.
+
+      - name: dominant_weather_condition
+        description: Most frequently observed weather condition for the date.
+
+  - name: gld_call_volume_trends
+    description: Monthly operational trends of emergency incident volume by incident type.
+    columns:
+      - name: incident_month
+        description: Calendar month of incident activity.
+        tests:
+          - not_null
+
+      - name: incident_type
+        description: Emergency incident category.
+        tests:
+          - not_null
+
+      - name: total_incidents
+        description: Total incidents for the month and incident type.
+        tests:
+          - not_null
+  
+      - name: avg_daily_incidents
+        description: Average incidents per active reporting day.
+
+      - name: rolling_3_month_avg_incidents
+        description: Rolling three-month average incident volume.
+
+  - name: gld_calls_per_capita
+    description: Census tract incident burden metrics normalized by population.
+    columns:
+      - name: census_year
+        description: Census year associated with demographic enrichment.
+        tests:
+          - not_null
+
+      - name: tract_geoid
+        description: Census tract GEOID.
+        tests:
+          - not_null
+
+      - name: total_incidents
+        description: Total incidents occurring within the tract.
+        tests:
+          - not_null
+
+      - name: incidents_per_1000_residents
+        description: Incident burden normalized per 1,000 residents.
+
+      - name: incident_burden_rank
+        description: Relative ranking of tract incident burden within the census year.
+
+      - name: incident_burden_quintile
+        description: Population-normalized incident burden quintile classification.
