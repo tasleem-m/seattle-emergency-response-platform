@@ -13,8 +13,6 @@ The goal of this project is to understand how emergency call volume varies acros
 
 The pipeline follows a medallion-style architecture using Snowflake and dbt.
 
-### Data Flow
-
 ```text
 Seattle Fire 911 API
 NOAA GHCNh Weather Data
@@ -46,8 +44,11 @@ Census TIGER/Line Tracts
 ```
 
 ## Datasets
-
-### Seattle Fire 911 Calls
+<details>     
+<summary>
+            
+**Seattle Fire 911 Calls**
+</summary>
 
 The Seattle Fire 911 Calls dataset contains emergency response incidents from the Seattle Fire Department, including incident type, timestamp, address, and geographic coordinates.
 
@@ -67,10 +68,12 @@ Use cases:
 
 Source:
 - Seattle Open Data API (Socrata)
-
----
-
-### NOAA GHCNh Hourly Weather Data
+</details>
+<details>     
+<summary>
+            
+**NOAA GHCNh Hourly Weather Data**
+</summary>
 
 The NOAA Global Historical Climatology Network Hourly (GHCNh) dataset provides historical hourly weather observations from Seattle-Tacoma International Airport.
 
@@ -93,10 +96,12 @@ Source:
 
 Station used:
 - `USW00024233` — Seattle Tacoma Airport
-
----
-
-### U.S. Census ACS Demographics
+</details>
+<details>     
+<summary>
+            
+**U.S. Census ACS Demographics**
+</summary>
 
 American Community Survey (ACS) demographic data was used to enrich incidents with socioeconomic context at the census tract level.
 
@@ -112,10 +117,12 @@ Use cases:
 
 Source:
 - U.S. Census Bureau API
-
----
-
-### Census TIGER/Line Tracts
+</details>
+<details>     
+<summary>
+            
+**Census TIGER/Line Tracts**
+</summary>
 
 Census TIGER/Line tract shapefiles provide polygon boundaries for census tracts used in geospatial enrichment.
 
@@ -131,6 +138,7 @@ Use cases:
 
 Source:
 - U.S. Census Bureau TIGER/Line Shapefiles
+</details>
 
 ## Tech Stack
 
@@ -212,7 +220,11 @@ This approach improves:
 
 ---
 
-### BRONZE Layer
+<details>     
+<summary>
+            
+**BRONZE Layer**
+</summary>
 
 The BRONZE layer stores ingested source data with minimal transformation.
 
@@ -231,10 +243,12 @@ Core tables:
 - `BRZ_WEATHER`
 - `BRZ_CENSUS`
 - `BRZ_CENSUS_TRACTS`
-
----
-
-### SILVER Layer
+</details>
+<details>     
+<summary>
+            
+**SILVER Layer**
+</summary>
 
 The SILVER layer standardizes raw data into clean domain entities.
 
@@ -257,10 +271,12 @@ Example transformations:
 - GeoJSON coordinate fallback logic
 - Census null normalization using `NULLIF`
 - Weather observation standardization
-
----
-
-### INTERMEDIATE Layer
+</details>
+<details>     
+<summary>
+            
+**INTERMEDIATE Layer**
+</summary>
 
 The INTERMEDIATE layer contains reusable transformation logic and canonicalized datasets shared across downstream marts.
 
@@ -272,10 +288,12 @@ Core models:
 - `INT_WEATHER_HOURLY`
 
 This layer reduces duplicated business logic across gold models and improves transformation maintainability.
-
----
-
-### GOLD Layer
+</details>
+<details>     
+<summary>
+            
+**GOLD Layer**
+</summary>
 
 The GOLD layer contains analytics-ready marts designed for operational, demographic, weather, and spatial analysis.
 
@@ -293,10 +311,19 @@ Key analytical capabilities:
 - Temporal trend analysis
 - Spatial hotspot detection
 - Demographic enrichment
+</details>
 
 ## Key Models
 
-### `GLD_INCIDENT_ENRICHED`
+The GOLD layer contains business-ready analytical marts used for operational and spatial analysis.
+
+---
+
+<details>     
+<summary>
+            
+**`GLD_INCIDENT_ENRICHED`**
+</summary>
 
 The central fact table of the warehouse.
 
@@ -325,10 +352,12 @@ Purpose:
 - Foundation for downstream analytical marts
 - Unified operational analytics dataset
 - Spatial and environmental enrichment layer
-
----
-
-### `GLD_SPATIAL_HOTSPOTS`
+</details>
+<details>     
+<summary>
+            
+**`GLD_SPATIAL_HOTSPOTS`**
+</summary>
 
 Aggregates emergency incidents by census tract and census year to identify geographic hotspots.
 
@@ -346,10 +375,12 @@ Purpose:
 
 Key feature:
 - Population-normalized incident rates for fair geographic comparison
-
----
-
-### `GLD_WEATHER_IMPACT`
+</details>
+<details>     
+<summary>
+            
+**`GLD_WEATHER_IMPACT`**
+</summary>
 
 Daily aggregation of incidents and associated weather conditions.
 
@@ -366,10 +397,12 @@ Purpose:
 - Environmental and operational correlation analysis
 - Weather impact trend analysis
 - Seasonal incident pattern analysis
-
----
-
-### `GLD_CALL_VOLUME_TRENDS`
+</details>
+<details>     
+<summary>
+            
+**`GLD_CALL_VOLUME_TRENDS`**
+</summary>
 
 Monthly operational trend analysis by incident type.
 
@@ -385,10 +418,12 @@ Purpose:
 
 Key feature:
 - Rolling average smoothing for operational trend analysis
-
----
-
-### `GLD_CALLS_PER_CAPITA`
+</details>
+<details>     
+<summary>
+            
+**`GLD_CALLS_PER_CAPITA`**
+</summary>
 
 Demographically normalized emergency incident burden analysis by census tract and year.
 
@@ -405,6 +440,7 @@ Purpose:
 
 Key feature:
 - Population-normalized tract ranking using window functions
+</details>
 
 ## Geospatial Analytics
 
@@ -414,7 +450,11 @@ The project uses Snowflake geospatial functions and census tract polygon boundar
 
 ---
 
-### Incident Geospatial Enrichment
+<details>     
+<summary>
+            
+**Incident Geospatial Enrichment**
+</summary>
 
 Emergency incidents are converted into Snowflake `GEOGRAPHY` point objects using latitude and longitude coordinates.
 
@@ -423,8 +463,12 @@ Example:
 ```sql
 ST_POINT(longitude, latitude)
 ```
-
-### Census Tract Polygon Processing
+</details>
+<details>     
+<summary>
+            
+**Census Tract Polygon Processing**
+</summary>
 
 Census TIGER/Line tract geometries were loaded into Snowflake and converted into native GEOGRAPHY polygon objects. This enabled tract-level spatial joins directly within Snowflake.
 
@@ -433,8 +477,12 @@ Example:
 ```sql
 TO_GEOGRAPHY(geometry)
 ```
-
-### Point-in-Polygon Spatial Joins
+</details>
+<details>     
+<summary>
+            
+**Point-in-Polygon Spatial Joins**
+</summary>
 
 Emergency incidents were spatially matched to census tracts using Snowflake's ST_CONTAINS function. This enrichment process attached Census tract GEOIDs, Population metrics, Median household income, Demographic context to each emergency incident.
 
@@ -446,8 +494,12 @@ ST_CONTAINS(
     incident_geography
 )
 ```
-
-### Spatial Analytics Use Cases
+</details>
+<details>     
+<summary>
+            
+**Spatial Analytics Use Cases**
+</summary>
 
 The geospatial enrichment layer enables:
 
@@ -457,8 +509,12 @@ The geospatial enrichment layer enables:
 - Demographic incident normalization
 - Geographic trend visualization
 - Spatial clustering and mapping
-
-### Spatially Enriched Gold Models
+</details>
+<details>     
+<summary>
+            
+**Spatially Enriched Gold Models**
+</summary>
 
 Key geospatially enriched models include:
 
@@ -467,6 +523,7 @@ Key geospatially enriched models include:
 - GLD_CALLS_PER_CAPITA
 
 These models support operational and demographic analysis at the census tract level.
+</details>
 
 ## Data Quality Handling
 
@@ -474,7 +531,11 @@ Several data quality and standardization strategies were implemented throughout 
 
 ---
 
-### Census Sentinel Value Normalization
+<details>     
+<summary>
+            
+**Census Sentinel Value Normalization**
+</summary>
 
 Certain Census API fields contained sentinel values representing unavailable or suppressed data.
 
@@ -491,8 +552,12 @@ NULLIF(
     -666666666
 )
 ```
-
-### Weather Observation Deduplication
+</details>
+<details>     
+<summary>
+            
+**Weather Observation Deduplication**
+</summary> 
 
 NOAA GHCNh hourly weather data can contain multiple observations within the same hour.
 
@@ -511,8 +576,12 @@ QUALIFY ROW_NUMBER() OVER (
 
 ) = 1
 ```
-
-### Coordinate Fallback Handling
+</details>
+<details>     
+<summary>
+            
+**Coordinate Fallback Handling**
+</summary>
 
 Some Seattle Fire incident records contained missing top-level latitude and longitude values while still preserving valid GeoJSON report location coordinates.
 
@@ -526,8 +595,12 @@ COALESCE(
     report_location:coordinates[1]::FLOAT
 )
 ```
-
-### Timestamp Standardization
+</details>
+<details>     
+<summary>
+            
+**Timestamp Standardization**
+</summary>
 
 Source systems contained multiple timestamp formats across APIs and raw ingestion layers.
 
@@ -538,8 +611,12 @@ Example:
 ```sql
 TRY_TO_TIMESTAMP_NTZ()
 ```
-
-### Geospatial Standardization
+</details>
+<details>     
+<summary>
+            
+**Geospatial Standardization**
+</summary>
 
 Census tract polygon geometries and incident coordinates were standardized into Snowflake GEOGRAPHY objects. This enabled accurate point-in-polygon enrichment and tract-level spatial analysis.
 
@@ -550,8 +627,12 @@ TO_GEOGRAPHY(geometry)
 
 ST_POINT(longitude, latitude)
 ```
-
-### dbt Testing and Validation
+</details>
+<details>     
+<summary>
+            
+**dbt Testing and Validation**
+</summary>
 
 dbt tests were implemented across silver and gold models to validate:
 
@@ -567,3 +648,4 @@ Examples:
 - unique
 
 This improved model reliability and analytical trustworthiness across the warehouse.
+</details>
