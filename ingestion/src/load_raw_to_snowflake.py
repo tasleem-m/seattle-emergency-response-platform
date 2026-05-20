@@ -1,6 +1,5 @@
 from utils.snowflake_helper import get_connection
 
-
 COPY_COMMANDS = [
 
     """
@@ -32,14 +31,11 @@ def load_to_snowflake():
 
         for command in COPY_COMMANDS:
 
-            print("Running Snowflake COPY INTO...")
             cursor.execute(command)
 
             results = cursor.fetchall()
 
             print(results)
-
-        print("Snowflake bronze load complete.")
 
     finally:
         cursor.close()

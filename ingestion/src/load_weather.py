@@ -1,6 +1,7 @@
-import polars as pl
-from datetime import datetime
 import os
+from datetime import datetime
+
+import polars as pl
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -20,16 +21,16 @@ def get_weather_data() -> pl.DataFrame:
 
     for year in range(START_YEAR, END_YEAR + 1):
         url = f"{BASE_URL}/{year}/parquet/GHCNh_{STATION_ID}_{year}.parquet"
-        
-        print(f"Scanning: {url}")
-        
+
+        (f"Scanning: {url}")
+
         try:
             weather = pl.scan_parquet(url)
 
             yearly_df.append(weather)
 
         except Exception as e:
-            print(f"Failed for {year}: {e}")
+            (f"Failed for {year}: {e}")
 
     if not yearly_df:
         raise ValueError("No weather data could be loaded.")

@@ -1,4 +1,5 @@
 import os
+
 import snowflake.connector
 from dotenv import load_dotenv
 

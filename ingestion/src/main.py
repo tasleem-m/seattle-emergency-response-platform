@@ -7,7 +7,7 @@ from load_raw_to_snowflake import load_to_snowflake
 def main():
     for batch in get_911_call_data():
         w(batch, "911_calls")
-    
+
     w(get_weather_data(), "weather")
 
     w(get_census_data(), "census")
