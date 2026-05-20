@@ -5,7 +5,7 @@ A near real-time emergency response analytics platform enriched with weather and
 
 This project is an end-to-end data engineering and analytics pipeline that analyzes Seattle Fire 911 emergency call patterns using weather and census enrichment.
 
-The pipeline ingests emergency incident data, historical hourly weather observations, census demographics, and census tract boundaries into Snowflake. The data is then transformed with dbt using a medallion architecture pattern to produce analytics-ready gold models for operational, spatial, demographic, and weather impact analysis.
+The pipeline ingests emergency incident data, historical hourly weather observations, census demographics, and census tract boundaries into Snowflake. The data is then transformed with dbt using a medallion architecture pattern to produce analytics-ready gold models for operational, spatial, demographic, and weather impact analysis. Apache Airflow orchestrates ingestion, Snowflake loading, dbt transformations, and automated data quality validation across the full pipeline lifecycle.
 
 The goal of this project is to understand how emergency call volume varies across time, geography, population density, and weather conditions. The final warehouse supports analysis such as emergency call volume trends, tract-level hotspots, calls per capita, and weather-related incident patterns.
 
@@ -24,7 +24,16 @@ Census TIGER/Line Tracts
    (Polars, GeoPandas, Requests)
             │
             ▼
-      Snowflake BRONZE Layer
+      AWS S3 Bronze Layer
+     (Partitioned Parquet)
+            │
+            ▼
+     Apache Airflow Orchestration
+   (Scheduling & Pipeline Control)
+            │
+            ▼
+    Snowflake BRONZE Layer
+     (Raw Source Storage)
             │
             ▼
       dbt SILVER Models
@@ -39,8 +48,7 @@ Census TIGER/Line Tracts
  (Analytics & Business Metrics)
             │
             ▼
-        Visualization Layer
-   (Planned: Streamlit / Plotly)
+  Analytics & Geospatial Insights
 ```
 
 ## Datasets
@@ -145,6 +153,7 @@ Source:
 ### Data Ingestion
 - **Python** — Core ingestion and orchestration scripting
 - **Polars** — High-performance dataframe processing and transformation
+- **AWS S3** — Bronze-layer parquet storage and staging
 - **GeoPandas** — Geospatial shapefile processing and geometry handling
 - **Requests** — API and HTTP data retrieval
 
@@ -187,25 +196,22 @@ Used for:
 
 ---
 
-### Planned Orchestration
-- **Apache Airflow** *(planned)*
+### Workflow Orchestration
+- **Apache Airflow**
 
-Planned use cases:
+Implemented use cases:
 - Scheduled ingestion pipelines
-- Automated dbt runs and tests
-- End-to-end workflow orchestration
+- Automated Snowflake bronze loading
+- Automated dbt model execution
+- Automated dbt testing and validation
+- End-to-end pipeline orchestration
+- DAG-based workflow monitoring and retries
 
----
-
-### Planned Visualization
-- **Streamlit** *(planned)*
-- **Plotly** *(planned)*
-
-Planned dashboards:
-- Incident trend analysis
-- Spatial hotspot mapping
-- Weather impact visualization
-- Calls per capita analysis
+Airflow orchestrates:
+1. API ingestion and S3 bronze uploads
+2. Snowflake bronze-layer loading
+3. dbt silver and gold model execution
+4. dbt testing and validation
 
 ## Medallion Architecture
 
@@ -234,9 +240,9 @@ Objectives:
 - Retain semi-structured source records
 
 Characteristics:
-- JSON and VARIANT ingestion
-- Minimal type casting
-- Append-oriented ingestion patterns
+- Partitioned parquet storage in AWS S3
+- Automated Snowflake bronze ingestion via Airflow
+- Incremental Snowflake COPY INTO loading
 
 Core tables:
 - `BRZ_911_CALLS`
@@ -312,6 +318,20 @@ Key analytical capabilities:
 - Spatial hotspot detection
 - Demographic enrichment
 </details>
+
+## Pipeline Orchestration
+
+Apache Airflow orchestrates the end-to-end pipeline execution and coordinates ingestion, warehouse loading, transformation, and validation workflows.
+
+The Airflow DAG performs the following steps:
+
+1. Execute Python ingestion pipelines
+2. Retrieve Seattle 911, NOAA weather, and Census datasets
+3. Store partitioned parquet files in AWS S3 bronze storage
+4. Load new parquet files into Snowflake bronze tables
+5. Execute dbt silver transformations
+6. Execute dbt gold analytical marts
+7. Run dbt data quality tests
 
 ## Key Models
 
@@ -648,4 +668,37 @@ Examples:
 - unique
 
 This improved model reliability and analytical trustworthiness across the warehouse.
+</details>
+<details>     
+<summary>
+            
+**Workflow Reliability & Orchestration**
+</summary>
+
+Apache Airflow was used to orchestrate ingestion, warehouse loading, transformation, and testing workflows across the pipeline.
+
+Airflow DAGs provided:
+- Centralized workflow scheduling
+- Dependency management
+- Retry handling
+- Execution monitoring
+- End-to-end pipeline observability
+
+This orchestration layer improved operational reliability and automated the full medallion pipeline lifecycle.
+
+Example orchestration flow:
+
+```text
+Python Ingestion
+        ↓
+AWS S3 Bronze
+        ↓
+Snowflake Bronze Load
+        ↓
+dbt Silver Models
+        ↓
+dbt Gold Models
+        ↓
+dbt Tests
+```
 </details>
