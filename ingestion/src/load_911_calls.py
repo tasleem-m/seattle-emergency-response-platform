@@ -1,8 +1,9 @@
-from sodapy import Socrata
-import polars as pl
 import os
-from datetime import datetime, timezone
+from datetime import UTC, datetime
+
+import polars as pl
 from dotenv import load_dotenv
+from sodapy import Socrata
 
 load_dotenv()
 
@@ -27,24 +28,23 @@ def get_911_call_data():
             )
 
         if not results:
-            print("No more data — finished ingestion.")
             break
 
         call_data = pl.from_dicts(results)
-        print(f"Rows in df: {call_data.height}")
+        (f"Rows in df: {call_data.height}")
 
         if call_data.height == 0:
-            print(f"Empty dataframe at offset={offset} — skipping.")
+            (f"Empty dataframe at offset={offset} — skipping.")
             offset += limit
             continue
 
         call_data = call_data.rename({col: col.upper() for col in call_data.columns})
         call_data = call_data.with_columns(
-            pl.lit(datetime.now(timezone.utc)).alias("_INGESTED_AT_UTC")
+            pl.lit(datetime.now(UTC)).alias("_INGESTED_AT_UTC")
         )
 
-        print(f"Processing {len(call_data)} rows (offset={offset})")
-        
+        (f"Processing {len(call_data)} rows (offset={offset})")
+
         yield call_data
 
         offset += limit

@@ -1,6 +1,7 @@
+from datetime import datetime
+
 from airflow import DAG
 from airflow.operators.bash import BashOperator
-from datetime import datetime
 
 INGESTION_DIR = "/opt/airflow/workspace/ingestion/src"
 DBT_DIR = "/opt/airflow/workspace/seattle_erp"
@@ -44,4 +45,3 @@ with DAG(
     )
 
     ingest_data >> run_dbt_silver >> run_dbt_gold >> run_tests
-    

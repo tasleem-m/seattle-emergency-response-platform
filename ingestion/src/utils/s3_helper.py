@@ -1,8 +1,9 @@
-import boto3
-from datetime import datetime, timezone
-from dotenv import load_dotenv
 import os
 import tempfile
+from datetime import UTC, datetime
+
+import boto3
+from dotenv import load_dotenv
 
 load_dotenv()
 
@@ -13,7 +14,7 @@ REGION = os.getenv("AWS_REGION")
 def write_parquet_to_s3(df, file_name):
     session = boto3.Session(profile_name=PROFILE, region_name=REGION)
     creds = session.get_credentials().get_frozen_credentials()
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
 
     path = (
         f"{BASE_PATH}/{file_name}/"
@@ -31,13 +32,13 @@ def write_parquet_to_s3(df, file_name):
         }
     )
 
-    print(f"Wrote to {path}")
+    (f"Wrote to {path}")
 
 def write_geo_parquet_to_s3(gdf, file_name):
     session = boto3.Session(profile_name=PROFILE, region_name=REGION)
     s3 = session.client("s3")
 
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
 
     key = (
         f"{file_name}/"
@@ -54,9 +55,9 @@ def write_geo_parquet_to_s3(gdf, file_name):
 
     gdf.to_parquet(tmp_path, engine="pyarrow")
 
-    print(f"Uploading to s3://{bucket}/{full_key}")
+    (f"Uploading to s3://{bucket}/{full_key}")
     s3.upload_file(tmp_path, bucket, full_key)
 
     os.remove(tmp_path)
 
-    print(f"Wrote to s3://{bucket}/{full_key}")
+    (f"Wrote to s3://{bucket}/{full_key}")

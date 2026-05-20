@@ -13,9 +13,13 @@ dependencies = [
     "polars>=1.40.1",
     "pyarrow>=24.0.0",
     "python-dotenv>=1.2.2",
+    "ruff>=0.15.13",
     "snowflake-connector-python>=4.4.0",
     "sodapy>=2.2.0",
 ]
 
 [project.scripts]
 seattle-emergency-response-platform = "seattle_emergency_response_platform:main"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W", "N", "UP", "B", "S", "SIM", "RUF", "T20"]
