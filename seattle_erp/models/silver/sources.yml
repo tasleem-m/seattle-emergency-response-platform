@@ -1,0 +1,20 @@
+version: 2
+
+sources:
+  - name: BRONZE
+    database: CAPSTONE
+    schema: BRONZE
+    description: "Raw ingested data from external sources (Seattle data, Census data, and Weather data)"
+
+    tables:
+      - name: BRZ_911_CALLS
+        description: "911 calls data ingested from external sources"
+
+      - name: BRZ_CENSUS
+        description: "Census data ingested from external sources"
+
+      - name: BRZ_CENSUS_TRACTS
+        description: "Census tract data ingested from external sources"
+
+      - name: BRZ_WEATHER
+        description: "Weather data ingested from external sources"
