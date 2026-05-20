@@ -6,6 +6,7 @@ from datetime import datetime
 import geopandas as gpd
 import zipfile
 import io
+import time
 
 load_dotenv()
 
@@ -13,6 +14,7 @@ START_YEAR = 2010
 END_YEAR = datetime.now().year
 BASE_URL = os.getenv("CENSUS_BASE_URL")
 TRACTS_URL = os.getenv("CENSUS_TRACTS_URL")
+API_KEY = os.getenv("CENSUS_API_KEY")
 
 def get_census_data() -> pl.DataFrame:
 
@@ -26,13 +28,26 @@ def get_census_data() -> pl.DataFrame:
             params = {
                 "get": "B01003_001E,B19013_001E",
                 "for": "tract:*",
-                "in": "state:53 county:033"  # Washington, King County
+                "in": "state:53 county:033",  # Washington, King County
+                "key": API_KEY
             }
 
-            resp = requests.get(url, params=params)
+            resp = requests.get(url, params=params, timeout=30)
+            print(f"Status code for {year}: {resp.status_code}")
+
             resp.raise_for_status()
 
-            data = resp.json()
+            try:
+                data = resp.json()
+
+            except Exception:
+                print(f"Invalid JSON response for {year}")
+                print(resp.text[:500])
+                continue
+
+            if len(data) <= 1:
+                print(f"No data returned for {year}")
+                continue
 
             census = pl.DataFrame(data[1:], schema=data[0]).with_columns([
                 pl.lit(year).alias("year"),
@@ -40,6 +55,9 @@ def get_census_data() -> pl.DataFrame:
             ])
 
             yearly_df.append(census)
+            print(f"Successfully loaded Census data for {year}")
+
+            time.sleep(1)
 
         except Exception as e:
             print(f"Failed for {year}: {e}")

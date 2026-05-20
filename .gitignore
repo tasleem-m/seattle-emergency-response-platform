@@ -216,3 +216,5 @@ data/
 tiger_tracts/
 logs/
 docker-compose.yml
+.user.yml
+profiles.yml
