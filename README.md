@@ -1,6 +1,8 @@
 # Seattle 911 Emergency Response Analytics Pipeline
 A near real-time emergency response analytics platform enriched with weather and demographic data to analyze demand patterns, geographic equity, and external drivers.
 
+Presentation: https://canva.link/k0jjff27bx8w2yb
+
 ## Project Overview
 
 This project is an end-to-end data engineering and analytics pipeline that analyzes Seattle Fire 911 emergency call patterns using weather and census enrichment.
